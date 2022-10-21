@@ -53,17 +53,6 @@ namespace Azure.Communication.CallAutomation
                 Argument.CheckNotNull(credential, nameof(credential)),
                 options ?? new CallAutomationClientOptions())
         { }
-
-        /// <summary> Initializes a new instance of <see cref="CallAutomationClient"/> with custom PMA endpoint.</summary>
-        /// <param name="pmaEndpoint">Endpoint for PMA</param>
-        /// <param name="connectionString">Connection string acquired from the Azure Communication Services resource.</param>
-        /// <param name="options">Client option exposing <see cref="ClientOptions.Diagnostics"/>, <see cref="ClientOptions.Retry"/>, <see cref="ClientOptions.Transport"/>, etc.</param>
-        public CallAutomationClient(Uri pmaEndpoint, string connectionString, CallAutomationClientOptions options = default)
-        : this(
-        pmaEndpoint,
-        options ?? new CallAutomationClientOptions(),
-        ConnectionString.Parse(connectionString))
-        { }
         #endregion
 
         #region private constructors
@@ -85,13 +74,6 @@ namespace Azure.Communication.CallAutomation
             ContentRestClient = new ContentRestClient(_clientDiagnostics, httpPipeline, endpoint, options.ApiVersion);
             ServerCallsRestClient = new ServerCallsRestClient(_clientDiagnostics, httpPipeline, endpoint, options.ApiVersion);
         }
-
-        private CallAutomationClient(Uri endpoint, CallAutomationClientOptions options, ConnectionString connectionString)
-        : this(
-        endpoint: endpoint.AbsoluteUri,
-        httpPipeline: options.CustomBuildHttpPipeline(connectionString),
-        options: options)
-        { }
         #endregion
 
         /// <summary>Initializes a new instance of <see cref="CallAutomationClient"/> for mocking.</summary>
@@ -200,7 +182,6 @@ namespace Azure.Communication.CallAutomation
         private static AnswerCallRequestInternal CreateAnswerCallRequest(AnswerCallOptions options)
         {
             AnswerCallRequestInternal request = new AnswerCallRequestInternal(options.IncomingCallContext, options.CallbackUri.AbsoluteUri);
-            request.MediaStreamingConfiguration = CreateMediaStreamingOptionsInternal(options.MediaStreamingOptions);
 
             return request;
         }
@@ -446,6 +427,23 @@ namespace Azure.Communication.CallAutomation
             {
                 if (options == null) throw new ArgumentNullException(nameof(options));
 
+                // if the object is null? then dont include
+
+                // else if if object variables are default? create one
+
+                // (dotnet only) else if object inputs are valid? then use the provided inputs
+
+                // if invalid, throw exception
+
+
+
+                // if the bool is false? then dont include
+
+                // else
+                // (dotnet only) if object inputs are valid? then use the provided inputs
+
+                // if invalid, throw exception
+
                 if (options.RepeatabilityHeaders.IsInvalidRepeatabilityHeaders())
                     throw new ArgumentException(CallAutomationErrorMessages.InvalidRepeatabilityHeadersMessage);
 
@@ -479,7 +477,6 @@ namespace Azure.Communication.CallAutomation
                 sourceDto,
                 options.CallbackUri.AbsoluteUri);
             request.OperationContext = options.OperationContext;
-            request.MediaStreamingConfiguration = CreateMediaStreamingOptionsInternal(options.MediaStreamingOptions);
 
             return request;
         }

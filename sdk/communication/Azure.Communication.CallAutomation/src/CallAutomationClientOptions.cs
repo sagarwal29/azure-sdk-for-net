@@ -37,12 +37,12 @@ namespace Azure.Communication.CallAutomation
         /// </summary>
         public enum ServiceVersion
         {
+            #pragma warning disable CA1707 // Identifiers should not contain underscores
             /// <summary>
-            /// The Beta of the CallAutomation service.
+            /// Public Preview Beta of the CallAutomation service.
             /// </summary>
-#pragma warning disable CA1707 // Identifiers should not contain underscores
             V2022_04_07_Preview = 1
-#pragma warning restore CA1707 // Identifiers should not contain underscores
+            #pragma warning restore CA1707 // Identifiers should not contain underscores
         }
     }
 }
