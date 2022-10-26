@@ -5,7 +5,8 @@ jobs:
 
   - job: UpdateDocsMsBuildConfig
     pool:
-      vmImage: ubuntu-20.04
+      name: azsdk-pool-mms-ubuntu-2004-general
+      vmImage: MMSUbuntu20.04Compliant
     variables:
       DocRepoLocation: $(Pipeline.Workspace)/docs
       DocRepoOwner: Azure
@@ -27,14 +28,24 @@ jobs:
               WorkingDirectory: $(DocRepoLocation)
 
       # Call update docs ci script to onboard packages
+      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
       - task: Powershell@2
         inputs:
           pwsh: true
           filePath: eng/common/scripts/Update-DocsMsPackages.ps1
           arguments: -DocRepoLocation $(DocRepoLocation)
         displayName: Update Docs Onboarding
+        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
-      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsToc.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -OutputLocation $(DocRepoLocation)/docs-ref-toc/reference-unified.yml
+        displayName: Generate ToC for main branch
+        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
@@ -66,6 +77,16 @@ jobs:
             -DocRepoLocation $(DocRepoLocation)
             -PackageSourceOverride 'https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json'
         displayName: Update Docs Onboarding for Daily branch
+      - task: Powershell@2
+        inputs:
+          pwsh: true
+          filePath: eng/common/scripts/Update-DocsMsToc.ps1
+          arguments: >-
+            -DocRepoLocation $(DocRepoLocation)
+            -OutputLocation $(DocRepoLocation)/docs-ref-toc/reference-unified.yml
+            -ReadmeFolderRoot "api/overview/azure"
+        displayName: Generate ToC for Daily Branches
+
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
           BaseRepoBranch: $(DailyDocsBranchName)

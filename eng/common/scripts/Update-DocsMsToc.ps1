@@ -253,7 +253,7 @@ if ($otherPackages) {
           break
         }
 
-        if ($matchingNode) {
+        if ($matchingNode -and ($matchingNode[0].PSObject.Members.Name -contains "items")) {
           $currentNode = $matchingNode[0].items
         }
         else {
