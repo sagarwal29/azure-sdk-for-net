@@ -35,7 +35,7 @@ namespace Azure.ResourceManager.EventHubs
         }
 
         /// <summary> The rights associated with the rule. </summary>
-        public IList<EventHubsAccessRight> Rights { get; }
+        public IList<EventHubsAccessRight> Rights { get; set; }
         /// <summary> The geo-location where the resource lives. </summary>
         public AzureLocation? Location { get; }
     }
